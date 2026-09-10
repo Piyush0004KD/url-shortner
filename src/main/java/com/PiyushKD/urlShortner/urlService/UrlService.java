@@ -6,12 +6,14 @@ import com.PiyushKD.urlShortner.dto.UrlResponse;
 import com.PiyushKD.urlShortner.entity.Url;
 import com.PiyushKD.urlShortner.repository.UrlRepo;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,9 +26,9 @@ public class UrlService {
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     public UrlResponse createShortUrl(UrlRequest request) {
 
-        List<Url> urls = urlRepository.findAll();
 
-        if (urls.size() >= 100) {
+
+        if (urlRepository.count()>= 100) {
             throw new RuntimeException("Maximum number of URLs reached");
         }
 
@@ -60,9 +62,9 @@ public class UrlService {
 
     }
 
-    public List<Url> getAll(){
+    public Page<Url> getAll(Pageable pageable){
 
-        return urlRepository.findAll();
+        return urlRepository.findAll(pageable);
 
     }
 
