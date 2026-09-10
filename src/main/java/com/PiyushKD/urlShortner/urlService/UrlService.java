@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.data.redis.core.RedisTemplate;
 
 
 import java.time.Duration;
@@ -20,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UrlService {
 
+    private final RedisTemplate<String, String> redisTemplate;
     private final UrlRepo urlRepository;
     private final UrlMapper mapper;
     private final String characters =
@@ -55,10 +57,19 @@ public class UrlService {
 
     public String getWebsite(String url){
 
+        String cachedUrl = redisTemplate.opsForValue().get(url);
+
+        if(cachedUrl!=null){
+            return cachedUrl;
+        }
+
         Url urlEntity = urlRepository.findByShortUrl(url)
                 .orElseThrow(() -> new RuntimeException("Url not found"));
 
-        return urlEntity.getLongUrl();
+        String originalUrl = urlEntity.getLongUrl();
+        redisTemplate.opsForValue().set(url,originalUrl,Duration.ofHours(1));
+
+        return originalUrl;
 
     }
 
@@ -70,6 +81,7 @@ public class UrlService {
 
     public void deleteLink(Long id){
         Url url = urlRepository.findById(id).orElseThrow(()-> new RuntimeException("no short url"));
+        redisTemplate.delete(url.getShortUrl());
         urlRepository.delete(url);
     }
 
