@@ -19,6 +19,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+
 public class UrlService {
 
     private final RedisTemplate<String, String> redisTemplate;
@@ -88,6 +89,11 @@ public class UrlService {
     @Scheduled(fixedRate = 60 * 60 * 1000)
     public void deleteExpiredUrl(){
         List<Url> list = urlRepository.findAll();
+
+        if(list.isEmpty()){
+            return;
+        }
+
         LocalDateTime now = LocalDateTime.now();
         for(Url x : list){
 
