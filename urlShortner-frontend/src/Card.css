@@ -1,0 +1,28 @@
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+}
+
+.url-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:80px;
+}
+
+.container{
+
+  width : 600px;
+  border: 1px solid black;
+  padding : 30px;
+  margin : 10px;
+  border-radius:10px;
+  text-align : center;
+  box-shadow : 5px 5px 5px black;
+
+
+}
+
