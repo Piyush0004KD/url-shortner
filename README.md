@@ -48,37 +48,38 @@ The application converts long URLs into short 6-character URLs and redirects use
 ## Project Structure
 
 ```text
-src/main/java/com/PiyushKD/urlShortner
-├── dto
-│   ├── UrlMapper.java
-│   ├── UrlRequest.java
-│   └── UrlResponse.java
-├── entity
-│   └── Url.java
-├── repository
-│   └── UrlRepo.java
-├── urlController
-│   └── UrlController.java
-├── urlService
-│   └── UrlService.java
-└── UrlShortnerApplication.java
+url-shortner
+│
+├── src/main/java/com/PiyushKD/urlShortner
+│   ├── dto
+│   │   ├── UrlMapper.java
+│   │   ├── UrlRequest.java
+│   │   └── UrlResponse.java
+│   ├── entity
+│   │   └── Url.java
+│   ├── repository
+│   │   └── UrlRepo.java
+│   ├── urlController
+│   │   └── UrlController.java
+│   ├── urlService
+│   │   └── UrlService.java
+│   └── UrlShortnerApplication.java
+│
+└── urlShortner-frontend
+    ├── src
+    │   ├── assets
+    │   ├── App.jsx
+    │   ├── Card.jsx
+    │   ├── Card.css
+    │   ├── UrlList.jsx
+    │   ├── UrlList.css
+    │   ├── index.css
+    │   └── main.jsx
+    ├── public
+    ├── package.json
+    ├── vite.config.js
+    └── index.html
 ```
-Frontend Structure
-urlShortner-frontend/
-├── src/
-│   ├── assets/
-│   ├── App.jsx
-│   ├── Card.jsx
-│   ├── Card.css
-│   ├── UrlList.jsx
-│   ├── UrlList.css
-│   ├── index.css
-│   └── main.jsx
-├── public/
-├── package.json
-├── vite.config.js
-└── index.html
-
 ## How It Works
 
 ### 1. Create a Short URL
