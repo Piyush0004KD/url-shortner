@@ -1,6 +1,8 @@
-<img width="1913" height="968" alt="image" src="https://github.com/user-attachments/assets/03e8160a-96d0-476c-8fab-9f7344461788" /># URL Shortener
+<img width="1913" height="968" alt="image" src="https://github.com/user-attachments/assets/03e8160a-96d0-476c-8fab-9f7344461788" />
 
-A backend URL Shortener built using **Spring Boot, PostgreSQL, Redis, and JPA**.
+# URL Shortener
+
+A backend URL Shortener built using **Spring Boot, PostgreSQL, Redis, and JPA**, paired with a **React + Vite** frontend.
 
 The application converts long URLs into short 6-character URLs and redirects users to the original URL. Redis is used as a cache to improve redirect performance, while expired URLs are automatically removed using scheduled cleanup.
 
@@ -18,6 +20,7 @@ The application converts long URLs into short 6-character URLs and redirects use
 - DTO-based request/response handling
 - Swagger/OpenAPI documentation
 - Unit testing with JUnit and Mockito
+- CORS-enabled API for local frontend development
 
 ## Tech Stack
 
@@ -38,7 +41,7 @@ The application converts long URLs into short 6-character URLs and redirects use
 
 ### Frontend
 
-- **React**
+- **React 19**
 - **Vite**
 - JavaScript
 - HTML
@@ -80,275 +83,110 @@ url-shortner
     ├── vite.config.js
     └── index.html
 ```
-## How It Works
-
-### 1. Create a Short URL
-
-A client sends the original URL to the API:
-
-```http
-POST /
-```
-
-The service:
-
-1. Checks whether the URL limit has been reached.
-2. Generates a random 6-character short code.
-3. Stores the original URL, short code, and creation time in PostgreSQL.
-4. Returns the generated short URL.
-
-Example response:
-
-```text
-http://localhost:8080/ykNHk7
-```
-
-### 2. Redirect
-
-When a user opens:
-
-```http
-GET /ykNHk7
-```
-
-The application first checks Redis.
-
-- **Redis hit:** return the cached original URL.
-- **Redis miss:** query PostgreSQL, store the URL in Redis, and return the original URL.
-
-The controller responds with HTTP `302 FOUND` and the original URL in the `Location` header.
-
-## Redis Caching
-
-Redis is used to reduce repeated database lookups during redirects.
-
-Flow:
-
-```text
-Client
-  |
-  v
-GET /shortCode
-  |
-  v
-Redis
-  |
-  +---- Cache Hit ----> Original URL
-  |
-  +---- Cache Miss
-            |
-            v
-        PostgreSQL
-            |
-            v
-        Store in Redis
-            |
-            v
-        Original URL
-```
-
-Cached URLs are stored for **1 hour**.
-
-## Database
-
-The application uses PostgreSQL with Spring Data JPA.
-
-The URL entity stores information such as:
-
-- ID
-- Short URL/code
-- Original URL
-- Creation timestamp
-
-## Automatic URL Expiration
-
-Expired URLs are automatically removed using Spring's scheduled task support.
-
-The cleanup task runs every hour and checks the creation time of stored URLs. URLs that have existed for at least one hour are deleted from:
-
-1. Redis
-2. PostgreSQL
-
-Scheduling is enabled using Spring's `@EnableScheduling`.
-
-## Pagination
-
-The URL listing endpoint supports Spring Data pagination and sorting.
-
-Example:
-
-```http
-GET /?page=0&size=25
-```
-
-With sorting:
-
-```http
-GET /?page=0&size=10&sort=createdAt,desc
-```
-
-Pagination is handled using Spring's `Pageable` and `Page`.
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/` | Create a short URL |
-| GET | `/{shortUrl}` | Redirect to original URL |
-| GET | `/` | Get paginated list of stored URLs |
+| Method | Endpoint         | Description                                             |
+|--------|------------------|----------------------------------------------------------|
+| POST   | `/`              | Create a short URL. Body: `{ "originalUrl": "https://..." }` |
+| GET    | `/{shortUrl}`    | Redirects (`302 FOUND`) to the original long URL          |
+| GET    | `/`              | Get a paginated list of all stored URLs (`?page=&size=&sort=`) |
 
-## Swagger / OpenAPI
-
-Swagger UI is available at:
-
-```text
-http://localhost:8080/swagger-ui/index.html
-```
-
-It can be used to view and test the available APIs.
-
-## Testing
-
-The project contains unit tests for the service layer using **JUnit 5 and Mockito**.
-
-Tests cover scenarios including:
-
-- Successful URL creation
-- URL limit handling
-- URL deletion
-- Expired URL cleanup
-- Redis cache hit
-- Redis cache miss
-- URL not found
-- Pagination
-
-Run the tests with:
-
-```bash
-./mvnw test
-```
-
-On Windows:
-
-```bash
-mvnw.cmd test
-```
-
-The service tests mock external dependencies such as PostgreSQL repositories and Redis, so a real Redis server is not required for those unit tests.
+Swagger UI is available once the backend is running at:
+`http://localhost:8080/swagger-ui/index.html`
 
 ## Prerequisites
 
-Before running the application, make sure you have:
+Make sure you have the following installed:
 
-- Java 17 or compatible JDK
-- PostgreSQL
-- Redis
-- Maven (optional because the project includes Maven Wrapper)
+- Java 17+
+- Maven 3.9+ (or use the included `mvnw` wrapper)
+- Node.js 18+ and npm
+- PostgreSQL (running locally or in a container)
+- Redis (running locally or in a container)
 
-Check Redis with:
-
-```bash
-redis-cli ping
-```
-
-Expected output:
-
-```text
-PONG
-```
-
-## Configuration
-
-Configure your PostgreSQL and Redis connection properties in `application.properties`.
-
-Example Redis configuration:
-
-```properties
-spring.data.redis.host=localhost
-spring.data.redis.port=6379
-```
-
-Do **not** commit database passwords, API keys, or other secrets to GitHub.
-
-## Running the Application
-
-Clone the repository:
+Quick start for PostgreSQL and Redis using Docker:
 
 ```bash
-git clone https://github.com/Piyush0004KD/url-shortner.git
-cd url-shortner
+docker run --name urlshortner-postgres -e POSTGRES_PASSWORD=yourpassword \
+  -e POSTGRES_DB=urlshortner -p 5432:5432 -d postgres
+
+docker run --name urlshortner-redis -p 6379:6379 -d redis
 ```
 
-Start the application using Maven Wrapper:
+## Backend Setup
 
-```bash
-./mvnw spring-boot:run
-```
+1. Clone the repository and move into the backend folder:
 
-The application will start on:
+   ```bash
+   git clone <repo-url>
+   cd urlShortner
+   ```
 
-```text
-http://localhost:8080
-```
+2. Configure your database and Redis connection in
+   `src/main/resources/application.properties`:
 
-## Example Usage
+   ```properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/urlshortner
+   spring.datasource.username=postgres
+   spring.datasource.password=yourpassword
 
-### Create a Short URL
+   spring.data.redis.host=localhost
+   spring.data.redis.port=6379
+   ```
 
-Using `curl`:
+   > It's recommended to move credentials out of `application.properties` and into environment variables or a `.env`/`application-local.properties` file that is excluded from version control.
 
-```bash
-curl -X POST http://localhost:8080/ \
-  -H "Content-Type: application/json" \
-  -d '{"originalUrl":"https://www.google.com/"}'
-```
+3. Build and run the application:
 
-Example response:
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
-```text
-http://localhost:8080/abcd12
-```
+   The backend will start on `http://localhost:8080`.
 
-### Open the Short URL
+4. Run the tests:
 
-```bash
-curl -i http://localhost:8080/abcd12
-```
+   ```bash
+   ./mvnw test
+   ```
 
-The application responds with a redirect to the original URL.
+## Frontend Setup
 
-### Get Stored URLs
+1. Move into the frontend folder:
 
-```bash
-curl "http://localhost:8080/?page=0&size=10"
-```
+   ```bash
+   cd urlShortner-frontend
+   ```
 
-## Current Limitations
+2. Install dependencies:
 
-- Short codes are generated randomly and collision handling is not currently implemented.
-- URL validation can be improved with stronger validation rules.
-- Generic `RuntimeException` is currently used for some error cases.
-- The maximum URL limit is fixed at 100.
-- Authentication and authorization are not implemented.
-- `Math.random()` is used for short-code generation.
+   ```bash
+   npm install
+   ```
 
-## Future Improvements
+3. Start the development server:
 
-Possible improvements include:
+   ```bash
+   npm run dev
+   ```
 
-- Add collision detection and retry logic for generated short codes.
-- Add custom exception classes and global exception handling.
-- Add stronger URL validation.
-- Add controller/API integration tests.
-- Add authentication and authorization.
-- Make the URL limit configurable.
-- Improve short-code generation.
-- Add analytics such as click counts.
-- Add Docker support for PostgreSQL and Redis.
-- Add CI/CD using GitHub Actions.
+   The frontend will start on `http://localhost:5173` and communicate with the backend at `http://localhost:8080` (CORS is already configured on the backend for this origin).
+
+4. Build for production:
+
+   ```bash
+   npm run build
+   ```
+
+## How It Works
+
+1. The user submits a long URL from the React frontend.
+2. The backend generates a random 6-character alphanumeric code and stores the mapping (`shortUrl` → `longUrl`) in PostgreSQL.
+3. On visiting the short URL, the backend first checks Redis for a cached mapping; if found, it redirects immediately.
+4. If not cached, it looks up PostgreSQL, redirects the user, and caches the result in Redis for 1 hour.
+5. A scheduled job runs hourly to remove URLs older than 1 hour from the database and Redis cache.
 
 ## Author
 
-**Piyush**
-
-GitHub: https://github.com/Piyush0004KD
+**Piyush KD**
