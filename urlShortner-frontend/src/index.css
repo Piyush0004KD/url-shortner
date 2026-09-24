@@ -1,1 +1,16 @@
+@import url('https://fonts.cdnfonts.com/css/minecraft-4');
 
+h1 {
+    font-family: 'Minecraft', sans-serif;
+    color: red;
+}
+
+body {
+    margin: 0;
+    background-color: #183b5c;
+}
+
+.minecraft-title {
+    font-family: 'Minecraft', sans-serif;
+    color: #ff0000;
+}  

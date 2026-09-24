@@ -26,3 +26,29 @@ body {
 
 }
 
+.container {
+    background-color: #8ecae6;
+}
+
+.url-input input {
+    width: 300px;
+    height: 35px;
+    padding: 0 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #555;
+}
+
+.url-input button {
+    background-color: #e32626;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 25px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.url-input button:hover {
+    background-color: #b91c1c;
+}
