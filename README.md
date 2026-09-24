@@ -1,4 +1,4 @@
-# URL Shortener
+<img width="1913" height="968" alt="image" src="https://github.com/user-attachments/assets/03e8160a-96d0-476c-8fab-9f7344461788" /># URL Shortener
 
 A backend URL Shortener built using **Spring Boot, PostgreSQL, Redis, and JPA**.
 
@@ -21,6 +21,8 @@ The application converts long URLs into short 6-character URLs and redirects use
 
 ## Tech Stack
 
+### Backend
+
 - **Java 17**
 - **Spring Boot 4.1.1**
 - Spring Web MVC
@@ -33,6 +35,15 @@ The application converts long URLs into short 6-character URLs and redirects use
 - JUnit 5
 - Mockito
 - Maven
+
+### Frontend
+
+- **React**
+- **Vite**
+- JavaScript
+- HTML
+- CSS
+- Fetch API
 
 ## Project Structure
 
