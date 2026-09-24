@@ -63,6 +63,21 @@ src/main/java/com/PiyushKD/urlShortner
 │   └── UrlService.java
 └── UrlShortnerApplication.java
 ```
+Frontend Structure
+urlShortner-frontend/
+├── src/
+│   ├── assets/
+│   ├── App.jsx
+│   ├── Card.jsx
+│   ├── Card.css
+│   ├── UrlList.jsx
+│   ├── UrlList.css
+│   ├── index.css
+│   └── main.jsx
+├── public/
+├── package.json
+├── vite.config.js
+└── index.html
 
 ## How It Works
 
